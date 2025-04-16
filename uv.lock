@@ -172,7 +172,7 @@ wheels = [
 
 [[package]]
 name = "pypi-aur"
-version = "0.1.0"
+version = "0.1.2"
 source = { editable = "." }
 dependencies = [
     { name = "pypi-simple" },

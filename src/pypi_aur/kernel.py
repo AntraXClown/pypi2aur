@@ -1,19 +1,26 @@
 from rich.console import Console
+import requests
 
 
 cl = Console()
 
 
-def fetchPkgInfo(pkg: str) -> dict:
+def fetchPkgInfo(pkg: str):
     """
-    Fetch package Pypi information
+    Consulta a API do PyPI e retorna todas as informações possíveis sobre a última versão do pacote.
     """
-    cl.print(f"[bold yellow]Fetching package info for {pkg}...[/bold yellow]")
-    return {
-        "name": pkg,
-        "version": "1.0.0",
-        "description": "A sample package",
-        "author": "John Doe",
-        "license": "MIT",
-        "url": "https://example.com",
-    }
+    url = f"https://pypi.org/pypi/{pkg}/json"
+    try:
+        resp = requests.get(url=url)
+        resp.raise_for_status()
+        data = resp.json()
+        latest_version = data["info"]["version"]
+        version_info = data["releases"].get(latest_version, [])
+        return {
+            "info": data["info"],
+            "latest_version": latest_version,
+            "release_files": version_info,
+            "urls": data.get("urls", []),
+        }
+    except Exception as e:
+        return {"error": str(e)}
