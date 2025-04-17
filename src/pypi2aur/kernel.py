@@ -51,7 +51,6 @@ def createPKGBUILD(pypiPackage: str) -> None:
     if pkg_info is None:
         print(f"::: {pypiPackage} does not exist on PyPI.")
     else:
-        print(pkg_info["release_files"][1])
         print(f"::: {pypiPackage} info fetched successfully.")
         print(f"::: {pypiPackage} latest version is {pkg_info['latest_version']}")
         # verify if PKGBUILD file exists
@@ -105,3 +104,100 @@ def createPKGBUILD(pypiPackage: str) -> None:
                     "# vim:set ts=2 sw=2 et:",
                 ],
             )
+
+
+def readParameter(parameterName: str, filePath: str = "PKGBUILD") -> str | None:
+    """
+    Read the value of a parameter from the PKGBUILD file.
+
+    Args:
+        parameterName (str): The name of the parameter to read.
+        filePath (str): The path to the PKGBUILD file (default: 'PKGBUILD').
+
+    Returns:
+        str | None: The value of the parameter, or None if not found.
+    """
+    try:
+        with open(filePath, "r") as file:
+            for line in file:
+                line = line.strip()
+                if line.startswith(parameterName + "="):
+                    value = line.split("=", 1)[1].strip()
+                    # Remove quotes if present
+                    if value.startswith('"') and value.endswith('"'):
+                        value = value[1:-1]
+                    elif value.startswith("'") and value.endswith("'"):
+                        value = value[1:-1]
+                    return value
+        return None
+    except IOError as e:
+        return None
+
+
+def changeParameter(
+    parameterName: str, newValue: str, filePath: str = "PKGBUILD"
+) -> bool:
+    """
+    Change the value of a parameter in the PKGBUILD file and save it.
+
+    Args:
+        parameterName (str): The name of the parameter to change.
+        newValue (str): The new value to set.
+        filePath (str): The path to the PKGBUILD file (default: 'PKGBUILD').
+
+    Returns:
+        bool: True if the parameter was changed, False otherwise.
+    """
+    try:
+        with open(filePath, "r") as file:
+            lines = file.readlines()
+        changed = False
+        for i, line in enumerate(lines):
+            if line.strip().startswith(parameterName + "="):
+                prefix = line.split("=", 1)[0]
+                lines[i] = f"{prefix}={newValue}\n"
+                changed = True
+                break
+        if changed:
+            with open(filePath, "w") as file:
+                file.writelines(lines)
+        return changed
+    except IOError:
+        return False
+
+
+def printUpdateHelper(param: str, newValue: str) -> None:
+    print(f"::: Updating {param}")
+    print(f"::: from:\t{readParameter(parameterName=param)}")
+    print(f"::: to:\t\t{newValue}")
+
+
+def updatePKGBUILD() -> None:
+    pypiPackage = readParameter("pkgname")
+    print(f"::: pkgname: {pypiPackage}")
+    print(f"::: Fetching Info for pypi: [{pypiPackage}]...")
+    pkg_info = fetchPkgInfo(f"{pypiPackage}")
+    if pkg_info is None:
+        print(f"::: {pypiPackage} does not exist on PyPI.")
+    else:
+        print(f"::: {pypiPackage} info fetched successfully.")
+        print(f"::: {pypiPackage} latest version is {pkg_info['latest_version']}")
+        print(f"::: Updating PKGBUILD...")
+        newPkgVer = pkg_info["latest_version"]
+        printUpdateHelper(param="pkgver", newValue=newPkgVer)
+        changeParameter(
+            parameterName="pkgver",
+            newValue=newPkgVer,
+        )
+        printUpdateHelper(param="pkgrel", newValue="1")
+        changeParameter(
+            parameterName="pkgrel",
+            newValue="1",
+        )
+
+        newSource = f"(\"{pkg_info['release_files'][1]['url']}\")"
+        printUpdateHelper(param="source", newValue=newSource)
+        changeParameter(
+            parameterName="source",
+            newValue=newSource,
+        )

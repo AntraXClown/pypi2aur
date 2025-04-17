@@ -1,5 +1,5 @@
 import click
-from . import createPKGBUILD
+from . import createPKGBUILD, updatePKGBUILD
 
 # This is the version of the application.
 APP_VERSION = "0.1.4"
@@ -13,7 +13,7 @@ def showNameAndVersion() -> None:
     Returns:
         None
     """
-    click.echo(f"{APP_NAME} version {APP_VERSION}")
+    click.echo(f"{APP_NAME} version {APP_VERSION}\n")
 
 
 @click.group()
@@ -35,3 +35,11 @@ def create(pkg: str) -> None:
 
     """
     createPKGBUILD(pypiPackage=pkg)
+
+
+@cli.command()
+def update() -> None:
+    """
+    update PKGBUILD file based to a pypi package.
+    """
+    updatePKGBUILD()

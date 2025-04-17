@@ -7,3 +7,4 @@
 - Use `rich` para saída colorida no terminal.
 - Siga o padrão PEP8 para formatação de código.
 - Escreva tudo em inglês.
+- Utilize sempre o padrão camelcase para nomear variáveis e funções
