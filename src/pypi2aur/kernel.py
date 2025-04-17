@@ -169,8 +169,8 @@ def changeParameter(
 
 def printUpdateHelper(param: str, newValue: str) -> None:
     print(f"::: Updating {param}")
-    print(f"from:\t{readParameter(parameterName=param)}")
-    print(f"to:\t{newValue}")
+    print(f"from =>\t{readParameter(parameterName=param)}")
+    print(f"to <=\t{newValue}")
 
 
 def updatePKGBUILD() -> None:
