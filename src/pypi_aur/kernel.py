@@ -46,3 +46,24 @@ def clone() -> None:
 def start() -> None:
     """Faz um L gostoso."""
     click.echo("Executing start command...")
+
+
+def aurPackageExists(package_name: str) -> bool:
+    """
+    Check if a package exists in the AUR (Arch User Repository).
+
+    Args:
+        package_name (str): The name of the AUR package.
+
+    Returns:
+        bool: True if the package exists, False otherwise.
+    """
+    url = f"https://aur.archlinux.org/rpc/v5/info/{package_name}"
+    try:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+        data = response.json()
+        return data.get("resultcount", 0) > 0
+    except requests.RequestException as e:
+        cl.print(f"[red]Error connecting to AUR API: {e}[/red]")
+        return False

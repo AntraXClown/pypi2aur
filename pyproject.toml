@@ -9,7 +9,7 @@ license         = { text = "MIT" }
 dependencies    = [
     "click>=8.1.8",
     "pypi-simple>=1.6.1",
- "rich>=14.0.0",
+    "rich>=14.0.0",
 ]
 
 [project.urls]
