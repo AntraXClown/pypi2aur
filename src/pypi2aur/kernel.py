@@ -78,7 +78,7 @@ def createPKGBUILD(pypiPackage: str) -> None:
                     f"pkgname={pypiPackage}",
                     f"_origpkgname={slugify(text=pypiPackage, separator="_")}",
                     f"pkgver={pkg_info['latest_version']}",
-                    f"pkrel=1",
+                    f"pkgrel=1",
                     f"pkgdesc=\"{pkg_info['info']['summary']}\"",
                     f'arch=("x86_64")',
                     f"url='{pkg_info['info']['project_url']}'",
