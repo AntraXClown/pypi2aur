@@ -1,3 +1,4 @@
+from typing import Any
 from rich.console import Console
 import requests
 
@@ -5,13 +6,13 @@ import requests
 cl = Console()
 
 
-def fetchPkgInfo(pkg: str):
+def fetchPkgInfo(pkg: str) -> dict[str, Any] | None:
     """
     Consulta a API do PyPI e retorna todas as informações possíveis sobre a última versão do pacote.
     """
-    url = f"https://pypi.org/pypi/{pkg}/json"
+    url: str = f"https://pypi.org/pypi/{pkg}/json"
     try:
-        resp = requests.get(url=url)
+        resp: requests.Response = requests.get(url=url)
         resp.raise_for_status()
         data = resp.json()
         latest_version = data["info"]["version"]
@@ -23,4 +24,4 @@ def fetchPkgInfo(pkg: str):
             "urls": data.get("urls", []),
         }
     except Exception as e:
-        return {"error": str(e)}
+        return None
