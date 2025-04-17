@@ -39,4 +39,4 @@ def create(pkg: str) -> None:
 @cli.command()
 def start() -> None:
     """Start the application."""
-    click.echo("Executing start command...")
+    create()

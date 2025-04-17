@@ -1,9 +1,5 @@
 from typing import Any
-from rich.console import Console
 import requests
-
-
-cl = Console()
 
 
 def fetchPkgInfo(pkg: str) -> dict[str, Any] | None:
@@ -44,5 +40,10 @@ def aurPackageExists(package_name: str) -> bool:
         data = response.json()
         return data.get("resultcount", 0) > 0
     except requests.RequestException as e:
-        cl.print(f"[red]Error connecting to AUR API: {e}[/red]")
+        print(f"[red]Error connecting to AUR API: {e}[/red]")
         return False
+
+
+def create(pypiPackage: str) -> None:
+    print(f"[bold yellow]Creating PKGBUILD for {pypiPackage}...[/bold yellow]")
+    pass
