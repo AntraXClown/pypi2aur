@@ -1,16 +1,12 @@
 [project]
 name            = "pypi-aur"
-version         = "0.1.2"
-description     = "PyPi to AUR package generator helper."
+version         = "0.1.3"
+description     = "PyPi to AUR PKGBUILD generator and helper."
 readme          = "README.md"
 authors         = [{ name = "Antrax", email = "fredcox@gmail.com" }]
 requires-python = ">=3.13"
 license         = { text = "MIT" }
-dependencies    = [
-    "click>=8.1.8",
-    "pypi-simple>=1.6.1",
-    "rich>=14.0.0",
-]
+dependencies    = ["click>=8.1.8", "pypi-simple>=1.6.1", "rich>=14.0.0"]
 
 [project.urls]
 homepage   = "https://github.com/antrax2024/pypi-aur"

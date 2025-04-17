@@ -1,11 +1,8 @@
 from typing import Any
 from rich.console import Console
 import requests
-import click
 
 
-# This is the version of the application.
-APP_VERSION = "1.0.0"
 cl = Console()
 
 
@@ -28,24 +25,6 @@ def fetchPkgInfo(pkg: str) -> dict[str, Any] | None:
         }
     except Exception as e:
         return None
-
-
-@click.group()
-@click.version_option(APP_VERSION, "-v", "--version", message="%(version)s")
-def cli() -> None:
-    pass
-
-
-@cli.command()
-def clone() -> None:
-    """Clone the repository."""
-    click.echo("Executing clone command...")
-
-
-@cli.command()
-def start() -> None:
-    """Faz um L gostoso."""
-    click.echo("Executing start command...")
 
 
 def aurPackageExists(package_name: str) -> bool:
