@@ -211,3 +211,18 @@ def updatePKGBUILD() -> None:
         )
 
         print(f"::: PKGBUILD updated successfully.")
+
+
+def readPyPiDeps(pypipackage: str) -> None:
+    """
+    Read and show pypi package dependencies.
+    """
+    pkg_info = fetchPkgInfo(pypipackage)
+    if pkg_info is None:
+        print(f"::: {pypipackage} does not exist on PyPI.")
+    else:
+        print(f"::: {pypipackage} info fetched successfully.")
+        print(f"::: {pypipackage} latest version is {pkg_info['latest_version']}")
+        print(f"::: Dependencies info from package in pypi.org:")
+        for dep in pkg_info["info"]["requires_dist"]:
+            print(f"::: {dep}")

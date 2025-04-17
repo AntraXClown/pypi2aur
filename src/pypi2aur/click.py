@@ -1,5 +1,5 @@
 import click
-from . import createPKGBUILD, updatePKGBUILD
+from . import createPKGBUILD, readPyPiDeps, updatePKGBUILD
 
 # This is the version of the application.
 APP_VERSION = "0.1.4"
@@ -43,3 +43,12 @@ def update() -> None:
     update PKGBUILD file based to a pypi package.
     """
     updatePKGBUILD()
+
+
+@cli.command()
+@click.argument("pkg", required=True)
+def showdeps(pkg: str) -> None:
+    """
+    Read and show pypi package dependencies.
+    """
+    readPyPiDeps(pypipackage=pkg)
