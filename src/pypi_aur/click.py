@@ -16,7 +16,7 @@ def showNameAndVersion() -> None:
 
 
 @click.group()
-@click.version_option(APP_VERSION, "-v", "--version", message="%(version)s")
+# @click.version_option(APP_VERSION, "-v", "--version", message="%(version)s")
 def cli() -> None:
     """pypi-aur - PyPi to AUR PKGBUILD generator and helper."""
     # Show program name and version on every invocation
