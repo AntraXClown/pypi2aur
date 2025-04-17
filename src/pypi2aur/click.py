@@ -1,4 +1,5 @@
 import click
+from . import createPKGBUILD
 
 # This is the version of the application.
 APP_VERSION = "0.1.4"
@@ -33,10 +34,4 @@ def create(pkg: str) -> None:
         pkg (str): Name of the pypi  package for which to create a PKGBUILD
 
     """
-    click.echo(f"Creating package {pkg}...")
-
-
-@cli.command()
-def start() -> None:
-    """Start the application."""
-    create()
+    createPKGBUILD(pypiPackage=pkg)
