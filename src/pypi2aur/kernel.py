@@ -1,3 +1,4 @@
+from calendar import c
 from typing import Any
 import requests
 import datetime
@@ -168,8 +169,8 @@ def changeParameter(
 
 def printUpdateHelper(param: str, newValue: str) -> None:
     print(f"::: Updating {param}")
-    print(f"::: from:\t{readParameter(parameterName=param)}")
-    print(f"::: to:\t\t{newValue}")
+    print(f"from:\t{readParameter(parameterName=param)}")
+    print(f"to:\t{newValue}")
 
 
 def updatePKGBUILD() -> None:
@@ -201,3 +202,12 @@ def updatePKGBUILD() -> None:
             parameterName="source",
             newValue=newSource,
         )
+
+        newSha256Sums = f"(\"{pkg_info['release_files'][1]['digests']['sha256']}\")"
+        printUpdateHelper(param="sha256sums", newValue=newSha256Sums)
+        changeParameter(
+            parameterName="sha256sums",
+            newValue=newSha256Sums,
+        )
+
+        print(f"::: PKGBUILD updated successfully.")
