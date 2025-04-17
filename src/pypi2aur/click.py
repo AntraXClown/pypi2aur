@@ -1,8 +1,8 @@
 import click
 
 # This is the version of the application.
-APP_VERSION = "0.1.3"
-APP_NAME = "pypi-aur"
+APP_VERSION = "0.1.4"
+APP_NAME = "pypi2aur"
 
 
 def showNameAndVersion() -> None:
@@ -18,7 +18,7 @@ def showNameAndVersion() -> None:
 @click.group()
 # @click.version_option(APP_VERSION, "-v", "--version", message="%(version)s")
 def cli() -> None:
-    """pypi-aur - PyPi to AUR PKGBUILD generator and helper."""
+    """pypi2aur - PyPi to AUR PKGBUILD generator and helper."""
     # Show program name and version on every invocation
     pass
 

@@ -162,21 +162,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pypi-aur"
-version = "0.1.3"
-source = { editable = "." }
-dependencies = [
-    { name = "click" },
-    { name = "pypi-simple" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "click", specifier = ">=8.1.8" },
-    { name = "pypi-simple", specifier = ">=1.6.1" },
-]
-
-[[package]]
 name = "pypi-simple"
 version = "1.6.1"
 source = { registry = "https://pypi.org/simple" }
@@ -190,6 +175,21 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/27/2b/b8548d960a1d740f7789548ef2bee28af9df680f98a88bc8ef18d3b4bb64/pypi_simple-1.6.1.tar.gz", hash = "sha256:b5124852a4da60316af056db9a4020fa4fcd851a0e607f80f1ebd7756d2ed8d0", size = 56485 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/5b/52/9eb8c098f612a0659f61f3b140929381bf528a6ca0fea65e06eaefce7f32/pypi_simple-1.6.1-py3-none-any.whl", hash = "sha256:4d2ec96a3b0f78d55024cf1e2cf30f3bc0d8b7dd2a7ccbbd469722fca1b4fbd2", size = 25593 },
+]
+
+[[package]]
+name = "pypi2aur"
+version = "0.1.4"
+source = { editable = "." }
+dependencies = [
+    { name = "click" },
+    { name = "pypi-simple" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "click", specifier = ">=8.1.8" },
+    { name = "pypi-simple", specifier = ">=1.6.1" },
 ]
 
 [[package]]
