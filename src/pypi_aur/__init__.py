@@ -1,12 +1,13 @@
 from .kernel import *
-from .click import cli
+from .click import cli, showNameAndVersion
 
 
 def main() -> None:
-    pkg = fetchPkgInfo(pkg="py-nvfan")
+    # pkg = fetchPkgInfo(pkg="py-nvfan")
     # cl.print(pkg["info"])
-    if pkg is not None:
-        cl.print(pkg["latest_version"])
+    # if pkg is not None:
+    #     cl.print(pkg["latest_version"])
 
-    # cli()
+    showNameAndVersion()
+    cli()
     # print(aurPackageExists(package_name="confz"))
