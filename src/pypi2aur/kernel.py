@@ -1,8 +1,27 @@
+import sys
+import subprocess
 from typing import Any
 import requests
 import datetime
 from slugify import slugify
-import sys
+from rich.console import Console
+
+cl = Console()
+
+
+def printMessage(preamble: str, variable: Any) -> None:
+    cl.print(f"[bold yellow]:::[/bold yellow] [green]{preamble:<15}[/green]:{variable}")
+
+
+def makeSRCINFO() -> None:
+    command = "makepkg --printsrcinfo > .SRCINFO"
+    printMessage(preamble="Creating", variable=".SRCINFO")
+    try:
+        subprocess.run(command, shell=True, check=True)
+        printMessage(preamble=".SRCINFO", variable="File created successfully.")
+    except subprocess.CalledProcessError as e:
+        cl.print(f":::[bold red]Error creating .SRCINFO file: {e}[/bold red]")
+        sys.exit(1)
 
 
 def fetchPkgInfo(pkg: str) -> dict[str, Any] | None:
@@ -14,7 +33,7 @@ def fetchPkgInfo(pkg: str) -> dict[str, Any] | None:
         resp: requests.Response = requests.get(url=url)
         resp.raise_for_status()
         data = resp.json()
-        # print(data)
+        # cl.print(data)
         latest_version = data["info"]["version"]
         version_info = data["releases"].get(latest_version, [])
         return {
@@ -41,26 +60,32 @@ def appendLinesToFile(file_path: str, lines: list[str]) -> None:
                 file.write(line + "\n")
 
     except IOError as e:
-        print(f"::: Error writing to file {file_path}: {e}")
+        cl.print(f":::[bold red]Error writing to file {file_path}: {e}[/bold red]")
+        sys.exit(1)
 
 
 def createPKGBUILD(pypiPackage: str) -> None:
-    print(f"::: Creating PKGBUILD for pypi: [{pypiPackage}]...")
-    print(f"::: Fetching package info from PyPI...")
+    printMessage(preamble="Creating", variable="PKGBUILD for pypi: [{pypiPackage}]...")
+    printMessage(preamble="Fetching", variable="package info from PyPI...")
     pkg_info = fetchPkgInfo(pypiPackage)
     if pkg_info is None:
-        print(f"::: {pypiPackage} does not exist on PyPI.")
+        cl.print(
+            f":::[bold red]Error: {pypiPackage} does not exist on PyPI.[/bold red]"
+        )
+        printMessage(preamble=f"{pypiPackage}", variable="does not exist on PyPI.")
     else:
-        print(f"::: {pypiPackage} info fetched successfully.")
-        print(f"::: {pypiPackage} latest version is {pkg_info['latest_version']}")
+        printMessage(preamble=f"{pypiPackage}", variable="Info fetched successfully.")
+        printMessage(
+            preamble=f"latest version", variable=f"{pkg_info['latest_version']}"
+        )
         # verify if PKGBUILD file exists
         try:
             with open("PKGBUILD", "r") as file:
-                print(f"::: PKGBUILD file already exists.")
-                print("Exiting...")
+                printMessage(preamble=f"PKGBUILD", variable=f"Already exists.")
+                cl.print("Exiting...")
                 sys.exit(1)
         except FileNotFoundError:
-            print(f"::: append lines to PKGBUILD...")
+            printMessage(preamble=f"Status", variable=f"append lines to PKGBUILD...")
             # header
             appendLinesToFile(
                 file_path="PKGBUILD",
@@ -104,6 +129,7 @@ def createPKGBUILD(pypiPackage: str) -> None:
                     "# vim:set ts=2 sw=2 et:",
                 ],
             )
+            makeSRCINFO()
 
 
 def readParameter(parameterName: str, filePath: str = "PKGBUILD") -> str | None:
@@ -167,49 +193,85 @@ def changeParameter(
 
 
 def printUpdateHelper(param: str, newValue: str) -> None:
-    print(f"::: Updating {param}")
-    print(f"from =>\t{readParameter(parameterName=param)}")
-    print(f"to <=\t{newValue}")
+    printMessage(preamble=f"Status", variable=f"Updating {param}")
+
+    printMessage(
+        preamble=f"from =>".ljust(15), variable=f"{readParameter(parameterName=param)}"
+    )
+    printMessage(preamble=f"to <=".ljust(15), variable=f"{newValue}")
+
+
+def checkIfPKGBUILDExists() -> bool:
+    """
+    Check if the PKGBUILD file exists.
+
+    Returns:
+        bool: True if the PKGBUILD file exists, False otherwise.
+    """
+    try:
+        with open("PKGBUILD", "r") as file:
+            return True
+    except FileNotFoundError:
+        return False
 
 
 def updatePKGBUILD() -> None:
-    pypiPackage = readParameter("pkgname")
-    print(f"::: pkgname: {pypiPackage}")
-    print(f"::: Fetching Info for pypi: [{pypiPackage}]...")
-    pkg_info = fetchPkgInfo(f"{pypiPackage}")
-    if pkg_info is None:
-        print(f"::: {pypiPackage} does not exist on PyPI.")
+    if checkIfPKGBUILDExists():
+        pypiPackage = readParameter("pkgname")
+        printMessage(preamble=f"pkgname", variable=f"{pypiPackage}")
+        printMessage(preamble=f"Fetching", variable=f"Info for pypi...")
+        pkg_info = fetchPkgInfo(f"{pypiPackage}")
+        if pkg_info is None:
+            cl.print(
+                f":::[bold red]Error {pypiPackage} does not exist on PyPI.[/bold red]"
+            )
+        else:
+            printMessage(
+                preamble=f"{pypiPackage}", variable=f"info fetched successfully."
+            )
+            printMessage(
+                preamble=f"{pypiPackage}",
+                variable=f"latest version is {pkg_info['latest_version']}",
+            )
+            printMessage(
+                preamble=f"Updating",
+                variable=f"PKGBUILD...",
+            )
+            newPkgVer = pkg_info["latest_version"]
+            printUpdateHelper(param="pkgver", newValue=newPkgVer)
+            changeParameter(
+                parameterName="pkgver",
+                newValue=newPkgVer,
+            )
+            printUpdateHelper(param="pkgrel", newValue="1")
+            changeParameter(
+                parameterName="pkgrel",
+                newValue="1",
+            )
+
+            newSource = f"(\"{pkg_info['release_files'][1]['url']}\")"
+            printUpdateHelper(param="source", newValue=newSource)
+            changeParameter(
+                parameterName="source",
+                newValue=newSource,
+            )
+
+            newSha256Sums = f"(\"{pkg_info['release_files'][1]['digests']['sha256']}\")"
+            printUpdateHelper(param="sha256sums", newValue=newSha256Sums)
+            changeParameter(
+                parameterName="sha256sums",
+                newValue=newSha256Sums,
+            )
+
+            printMessage(
+                preamble=f"PKGBUILD",
+                variable=f"Updated successfully!",
+            )
+            makeSRCINFO()
     else:
-        print(f"::: {pypiPackage} info fetched successfully.")
-        print(f"::: {pypiPackage} latest version is {pkg_info['latest_version']}")
-        print(f"::: Updating PKGBUILD...")
-        newPkgVer = pkg_info["latest_version"]
-        printUpdateHelper(param="pkgver", newValue=newPkgVer)
-        changeParameter(
-            parameterName="pkgver",
-            newValue=newPkgVer,
-        )
-        printUpdateHelper(param="pkgrel", newValue="1")
-        changeParameter(
-            parameterName="pkgrel",
-            newValue="1",
-        )
-
-        newSource = f"(\"{pkg_info['release_files'][1]['url']}\")"
-        printUpdateHelper(param="source", newValue=newSource)
-        changeParameter(
-            parameterName="source",
-            newValue=newSource,
-        )
-
-        newSha256Sums = f"(\"{pkg_info['release_files'][1]['digests']['sha256']}\")"
-        printUpdateHelper(param="sha256sums", newValue=newSha256Sums)
-        changeParameter(
-            parameterName="sha256sums",
-            newValue=newSha256Sums,
-        )
-
-        print(f"::: PKGBUILD updated successfully.")
+        cl.print(f":::[bold red]PKGBUILD file does not exist.[/bold red]")
+        cl.print(f"::: Exiting...")
+        sys.exit(1)
 
 
 def readPyPiDeps(pypipackage: str) -> None:
@@ -218,10 +280,23 @@ def readPyPiDeps(pypipackage: str) -> None:
     """
     pkg_info = fetchPkgInfo(pypipackage)
     if pkg_info is None:
-        print(f"::: {pypipackage} does not exist on PyPI.")
+        printMessage(
+            preamble=f"{pypipackage}",
+            variable=f"Does not exist on PyPI.",
+        )
     else:
-        print(f"::: {pypipackage} info fetched successfully.")
-        print(f"::: {pypipackage} latest version is {pkg_info['latest_version']}")
-        print(f"::: Dependencies info from package in pypi.org:")
+        cl.print(f"::: {pypipackage} info fetched successfully.")
+        printMessage(
+            preamble=f"{pypipackage}",
+            variable=f"Info fetched successfully.",
+        )
+        printMessage(
+            preamble=f"{pypipackage}",
+            variable=f"Latest version is {pkg_info['latest_version']}",
+        )
+        printMessage(
+            preamble=f"{pypipackage}",
+            variable=f"Dependencies:",
+        )
         for dep in pkg_info["info"]["requires_dist"]:
-            print(f"::: {dep}")
+            cl.print(f"[bold green]==>[/bold green] {dep}")
