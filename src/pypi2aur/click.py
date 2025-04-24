@@ -2,7 +2,7 @@ import click
 from . import createPKGBUILD, readPyPiDeps, updatePKGBUILD
 
 # This is the version of the application.
-APP_VERSION = "0.1.6"
+APP_VERSION = "0.1.7"
 APP_NAME = "pypi2aur"
 
 
