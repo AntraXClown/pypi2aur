@@ -43,6 +43,7 @@ def fetchPkgInfo(pkg: str) -> dict[str, Any] | None:
             "urls": data.get("urls", []),
         }
     except Exception as e:
+        cl.print(f":::[bold red]Error fetching package info: {e}[/bold red]")
         return None
 
 
@@ -76,16 +77,16 @@ def createPKGBUILD(pypiPackage: str) -> None:
     else:
         printMessage(preamble=f"{pypiPackage}", variable="Info fetched successfully.")
         printMessage(
-            preamble=f"latest version", variable=f"{pkg_info['latest_version']}"
+            preamble="latest version", variable=f"{pkg_info['latest_version']}"
         )
         # verify if PKGBUILD file exists
         try:
-            with open("PKGBUILD", "r") as file:
-                printMessage(preamble=f"PKGBUILD", variable=f"Already exists.")
+            with open("PKGBUILD", "r"):
+                printMessage(preamble="PKGBUILD", variable="Already exists.")
                 cl.print("Exiting...")
                 sys.exit(1)
         except FileNotFoundError:
-            printMessage(preamble=f"Status", variable=f"append lines to PKGBUILD...")
+            printMessage(preamble="Status", variable="append lines to PKGBUILD...")
             # header
             appendLinesToFile(
                 file_path="PKGBUILD",
@@ -101,13 +102,13 @@ def createPKGBUILD(pypiPackage: str) -> None:
                 file_path="PKGBUILD",
                 lines=[
                     f"pkgname={pypiPackage}",
-                    f"_origpkgname={slugify(text=pypiPackage, separator="_")}",
+                    f"_origpkgname={slugify(text=pypiPackage, separator='_')}",
                     f"pkgver={pkg_info['latest_version']}",
-                    f"pkgrel=1",
-                    f"pkgdesc=\"{pkg_info['info']['summary']}\"",
-                    f'arch=("x86_64")',
+                    "pkgrel=1",
+                    f'pkgdesc="{pkg_info["info"]["summary"]}"',
+                    'arch=("x86_64")',
                     f"url='{pkg_info['info']['project_url']}'",
-                    f"license=(\"{pkg_info['info']['license']}\")",
+                    f'license=("{pkg_info["info"]["license"]}")',
                     "depends=()",
                     "makedepends=(",
                     '\t"python-build"',
@@ -116,8 +117,8 @@ def createPKGBUILD(pypiPackage: str) -> None:
                     '\t"python-setuptools"',
                     '\t"python-hatchling"',
                     ")",
-                    f"source=(\"{pkg_info["release_files"][1]['url']}\")",
-                    f"sha256sums=(\"{pkg_info["release_files"][1]['digests']['sha256']}\")",
+                    f'source=("{pkg_info["release_files"][1]["url"]}")',
+                    f'sha256sums=("{pkg_info["release_files"][1]["digests"]["sha256"]}")',
                     "package() {",
                     "\t" + 'cd "${_origpkgname}-${pkgver}" || exit',
                     "\t" + "python -m build --wheel --no-isolation",
@@ -157,6 +158,7 @@ def readParameter(parameterName: str, filePath: str = "PKGBUILD") -> str | None:
                     return value
         return None
     except IOError as e:
+        cl.print(f"IOError: {e}")
         return None
 
 
@@ -193,12 +195,12 @@ def changeParameter(
 
 
 def printUpdateHelper(param: str, newValue: str) -> None:
-    printMessage(preamble=f"Status", variable=f"Updating {param}")
+    printMessage(preamble="Status", variable=f"Updating {param}")
 
     printMessage(
-        preamble=f"from =>".ljust(15), variable=f"{readParameter(parameterName=param)}"
+        preamble="from =>".ljust(15), variable=f"{readParameter(parameterName=param)}"
     )
-    printMessage(preamble=f"to <=".ljust(15), variable=f"{newValue}")
+    printMessage(preamble="to <=".ljust(15), variable=f"{newValue}")
 
 
 def checkIfPKGBUILDExists() -> bool:
@@ -209,7 +211,7 @@ def checkIfPKGBUILDExists() -> bool:
         bool: True if the PKGBUILD file exists, False otherwise.
     """
     try:
-        with open("PKGBUILD", "r") as file:
+        with open("PKGBUILD", "r"):
             return True
     except FileNotFoundError:
         return False
@@ -218,8 +220,8 @@ def checkIfPKGBUILDExists() -> bool:
 def updatePKGBUILD() -> None:
     if checkIfPKGBUILDExists():
         pypiPackage = readParameter("pkgname")
-        printMessage(preamble=f"pkgname", variable=f"{pypiPackage}")
-        printMessage(preamble=f"Fetching", variable=f"Info for pypi...")
+        printMessage(preamble="pkgname", variable=f"{pypiPackage}")
+        printMessage(preamble="Fetching", variable="Info for pypi...")
         pkg_info = fetchPkgInfo(f"{pypiPackage}")
         if pkg_info is None:
             cl.print(
@@ -227,15 +229,15 @@ def updatePKGBUILD() -> None:
             )
         else:
             printMessage(
-                preamble=f"{pypiPackage}", variable=f"info fetched successfully."
+                preamble=f"{pypiPackage}", variable="info fetched successfully."
             )
             printMessage(
                 preamble=f"{pypiPackage}",
                 variable=f"latest version is {pkg_info['latest_version']}",
             )
             printMessage(
-                preamble=f"Updating",
-                variable=f"PKGBUILD...",
+                preamble="Updating",
+                variable="PKGBUILD...",
             )
             newPkgVer = pkg_info["latest_version"]
             printUpdateHelper(param="pkgver", newValue=newPkgVer)
@@ -249,14 +251,14 @@ def updatePKGBUILD() -> None:
                 newValue="1",
             )
 
-            newSource = f"(\"{pkg_info['release_files'][1]['url']}\")"
+            newSource = f'("{pkg_info["release_files"][1]["url"]}")'
             printUpdateHelper(param="source", newValue=newSource)
             changeParameter(
                 parameterName="source",
                 newValue=newSource,
             )
 
-            newSha256Sums = f"(\"{pkg_info['release_files'][1]['digests']['sha256']}\")"
+            newSha256Sums = f'("{pkg_info["release_files"][1]["digests"]["sha256"]}")'
             printUpdateHelper(param="sha256sums", newValue=newSha256Sums)
             changeParameter(
                 parameterName="sha256sums",
@@ -264,13 +266,13 @@ def updatePKGBUILD() -> None:
             )
 
             printMessage(
-                preamble=f"PKGBUILD",
-                variable=f"Updated successfully!",
+                preamble="PKGBUILD",
+                variable="Updated successfully!",
             )
             makeSRCINFO()
     else:
-        cl.print(f":::[bold red]PKGBUILD file does not exist.[/bold red]")
-        cl.print(f"::: Exiting...")
+        cl.print(":::[bold red]PKGBUILD file does not exist.[/bold red]")
+        cl.print("::: Exiting...")
         sys.exit(1)
 
 
@@ -282,13 +284,13 @@ def readPyPiDeps(pypipackage: str) -> None:
     if pkg_info is None:
         printMessage(
             preamble=f"{pypipackage}",
-            variable=f"Does not exist on PyPI.",
+            variable="Does not exist on PyPI.",
         )
     else:
         cl.print(f"::: {pypipackage} info fetched successfully.")
         printMessage(
             preamble=f"{pypipackage}",
-            variable=f"Info fetched successfully.",
+            variable="Info fetched successfully.",
         )
         printMessage(
             preamble=f"{pypipackage}",
@@ -296,7 +298,7 @@ def readPyPiDeps(pypipackage: str) -> None:
         )
         printMessage(
             preamble=f"{pypipackage}",
-            variable=f"Dependencies:",
+            variable="Dependencies:",
         )
         for dep in pkg_info["info"]["requires_dist"]:
             cl.print(f"[bold green]==>[/bold green] {dep}")
