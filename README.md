@@ -14,9 +14,9 @@
   </span>
 </div>
 
-<div align="center">
-  <a href="https://asciinema.org/a/719336" target="_blank"><img src="https://asciinema.org/a/719336.svg" /></a>
-</div>
+## Demo
+
+https://github.com/antrax2024/pypi2aur/raw/refs/heads/main/pypy2aur.mp4
 
 ## ⚙️ Requirements
 
