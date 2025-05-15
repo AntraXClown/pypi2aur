@@ -16,7 +16,8 @@
 
 ## Demo
 
-https://github.com/antrax2024/pypi2aur/raw/refs/heads/main/pypy2aur.mp4
+https://github.com/user-attachments/assets/441369e7-cf6e-42c6-b33c-17a035c6149e
+
 
 ## ⚙️ Requirements
 
