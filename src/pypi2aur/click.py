@@ -1,24 +1,23 @@
 import click
 from pypi2aur.constants import APP_VERSION, APP_NAME
 from pypi2aur.kernel import createPKGBUILD, readPyPiDeps, updatePKGBUILD
+from rich.console import Console
 
 
-def showNameAndVersion() -> None:
-    """
-    Show the name and version of the application.
-
-    Returns:
-        None
-    """
-    click.echo(f"{APP_NAME} version {APP_VERSION}\n")
+cl = Console()
 
 
 @click.group()
-# @click.version_option(APP_VERSION, "-v", "--version", message="%(version)s")
+@click.version_option(
+    version=APP_VERSION, prog_name=APP_NAME, message=f"{APP_NAME} v{APP_VERSION}"
+)
 def cli() -> None:
     """pypi2aur - PyPi to AUR PKGBUILD generator and helper."""
     # Show program name and version on every invocation
-    pass
+
+    cl.print(
+        f"[bold blue]{APP_NAME}[/bold blue] [bold green]{APP_VERSION}[/bold green]"
+    )
 
 
 @cli.command()
@@ -28,7 +27,7 @@ def create(pkg: str) -> None:
     Create a new PKGBUILD file for a pypi package.
 
     Args:
-        pkg (str): Name of the pypi  package for which to create a PKGBUILD
+        pkg (str): Name of the pypi package for which to create a PKGBUILD
 
     """
     createPKGBUILD(pypiPackage=pkg)
@@ -37,7 +36,10 @@ def create(pkg: str) -> None:
 @cli.command()
 def update() -> None:
     """
-    update PKGBUILD file based to a pypi package.
+    Update PKGBUILD file based on a pypi package.
+
+    This command updates an existing PKGBUILD file in the current directory
+    by reading the package information and updating the relevant fields.
     """
     updatePKGBUILD()
 
@@ -47,5 +49,9 @@ def update() -> None:
 def showdeps(pkg: str) -> None:
     """
     Read and show pypi package dependencies.
+
+    Args:
+        pkg (str): Name of the pypi package to analyze dependencies for
+
     """
     readPyPiDeps(pypipackage=pkg)

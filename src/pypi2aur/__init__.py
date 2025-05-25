@@ -1,5 +1,4 @@
 def main() -> None:
-    from pypi2aur.click import cli, showNameAndVersion
+    from pypi2aur.click import cli
 
-    showNameAndVersion()
     cli()
