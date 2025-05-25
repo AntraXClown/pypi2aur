@@ -1,6 +1,6 @@
 [project]
 name            = "pypi2aur"
-version         = "0.1.8"
+version         = "0.1.12"
 description     = "PyPi to AUR PKGBUILD generator and helper."
 readme          = "README.md"
 authors         = [{ name = "Antrax", email = "fredcox@gmail.com" }]

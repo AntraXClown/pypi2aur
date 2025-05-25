@@ -1,6 +1,6 @@
 import click
 from pypi2aur.constants import APP_VERSION, APP_NAME
-from pypi2aur.kernel import createPKGBUILD, readPyPiDeps, updatePKGBUILD
+from pypi2aur.kernel import createPKGBUILD, readPyPiDeps, syncPKGBUILD
 from rich.console import Console
 
 
@@ -34,14 +34,11 @@ def create(pkg: str) -> None:
 
 
 @cli.command()
-def update() -> None:
+def sync() -> None:
     """
-    Update PKGBUILD file based on a pypi package.
-
-    This command updates an existing PKGBUILD file in the current directory
-    by reading the package information and updating the relevant fields.
+    Synchronize the PKGBUILD with the latest information from PyPI.
     """
-    updatePKGBUILD()
+    syncPKGBUILD()
 
 
 @cli.command()

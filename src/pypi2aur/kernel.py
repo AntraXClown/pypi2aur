@@ -206,11 +206,13 @@ def checkIfPKGBUILDExists() -> bool:
         return False
 
 
-def updatePKGBUILD() -> None:
+def syncPKGBUILD() -> None:
     if checkIfPKGBUILDExists():
-        pypiPackage = readParameter("pkgname")
-        printLog("{pkgname}: {pypiPackage}")
-        printLog("Fetching Info for pypi...")
+        aurPackage = readParameter("pkgname")
+        pypiPackage = readParameter("_origpkgname")
+        printLog(f"pypi package: {pypiPackage}")
+        printLog(f"aur package: {aurPackage}")
+        printLog(f"Fetching Info for pypi...")
         pkg_info = fetchPkgInfo(f"{pypiPackage}")
         if pkg_info is None:
             showError(f"{pypiPackage} does not exist on PyPI.")
@@ -258,14 +260,15 @@ def readPyPiDeps(pypipackage: str) -> None:
     """
     Read and show pypi package dependencies.
     """
-    pkg_info = fetchPkgInfo(pypipackage)
-    if pkg_info is None:
-        printLog(f"{pypipackage}: Does not exist on PyPI.")
-    else:
-        printLog(f"::: {pypipackage} info fetched successfully.")
-        printLog(f"{pypipackage}: Info fetched successfully.")
-        printLog(f"{pypipackage}: Latest version is {pkg_info['latest_version']}")
-        printLog(f"{pypipackage}:")
+    with cl.status("Working...\n") as status:
+        pkg_info = fetchPkgInfo(pypipackage)
+        if pkg_info is None:
+            printLog(f"{pypipackage}: Does not exist on PyPI.")
+        else:
+            printLog(f"::: {pypipackage} info fetched successfully.")
+            printLog(f"{pypipackage}: Info fetched successfully.")
+            printLog(f"{pypipackage}: Latest version is {pkg_info['latest_version']}")
+            printLog(f"{pypipackage}:")
 
-        for dep in pkg_info["info"]["requires_dist"]:
-            printLog(f"[bold green]==>[/bold green] {dep}")
+            for dep in pkg_info["info"]["requires_dist"]:
+                printLog(f"[bold green]==>[/bold green] {dep}")
