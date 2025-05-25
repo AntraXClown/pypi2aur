@@ -21,7 +21,7 @@ cl._log_render.omit_repeated_times = False
 
 
 def printLog(message: str) -> None:
-    cl.log(message)
+    cl.log(f"🗸 {message}")
 
 
 def printLine() -> None:
@@ -34,7 +34,7 @@ def showStatus(preamble: str, message: str) -> None:
 
 def showError(message: str) -> None:
     error = "ERROR"
-    cl.print(f"[bold red]{error:<{SPACES_DEFAULT}}[/bold red]: {message}")
+    cl.print(f"⛔ [bold red]{error:<{SPACES_DEFAULT}}[/bold red]: {message}")
 
 
 def fileExists(file: str) -> bool:
