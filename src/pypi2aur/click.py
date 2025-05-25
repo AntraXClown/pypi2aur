@@ -1,9 +1,6 @@
 import click
-from . import createPKGBUILD, readPyPiDeps, updatePKGBUILD
-
-# This is the version of the application.
-APP_VERSION = "0.1.8"
-APP_NAME = "pypi2aur"
+from pypi2aur.constants import APP_VERSION, APP_NAME
+from pypi2aur.kernel import createPKGBUILD, readPyPiDeps, updatePKGBUILD
 
 
 def showNameAndVersion() -> None:
