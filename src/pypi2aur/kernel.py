@@ -260,7 +260,7 @@ def readPyPiDeps(pypipackage: str) -> None:
     """
     Read and show pypi package dependencies.
     """
-    with cl.status("Working...\n") as status:
+    with cl.status("Working...\n"):
         pkg_info = fetchPkgInfo(pypipackage)
         if pkg_info is None:
             printLog(f"{pypipackage}: Does not exist on PyPI.")
