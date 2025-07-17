@@ -8,16 +8,15 @@
   <span>
     <img alt="PyPI - Version" src="https://img.shields.io/pypi/v/pypi2aur">
     <img alt="AUR Version" src="https://img.shields.io/aur/version/pypi2aur">
-    <img alt="Python Version from PEP 621 TOML" src="https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fantrax2024%2Fpypi2aur%2Frefs%2Fheads%2Fmain%2Fpyproject.toml">
-    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/antrax2024/pypi2aur">
-    <img alt="GitHub License" src="https://img.shields.io/github/license/antrax2024/pypi2aur">
+    <img alt="Python Version from PEP 621 TOML" src="https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2FAntraXClown%2Fpypi2aur%2Frefs%2Fheads%2Fmain%2Fpyproject.toml">
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/AntraXClown/pypi2aur">
+    <img alt="GitHub License" src="https://img.shields.io/github/license/AntraXClown/pypi2aur">
   </span>
 </div>
 
 ## Demo
 
 https://github.com/user-attachments/assets/441369e7-cf6e-42c6-b33c-17a035c6149e
-
 
 ## ⚙️ Requirements
 
